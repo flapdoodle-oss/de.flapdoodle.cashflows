@@ -11,7 +11,7 @@ import java.util.Optional;
 public abstract class ByDate<T> {
 	@Value.Parameter
 	protected abstract FlowType<T> type();
-	protected abstract List<Change<T>> changes();
+	public abstract List<Change<T>> changes();
 
 	@Value.Lazy
 	public Optional<T> aggregatedDelta() {

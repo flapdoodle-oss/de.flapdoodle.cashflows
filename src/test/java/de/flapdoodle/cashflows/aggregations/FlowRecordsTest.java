@@ -14,8 +14,8 @@ class FlowRecordsTest {
 	public void aggregationSample() {
 		LocalDate now = LocalDate.of(2012, 3, 24);
 
-		FlowId<Double> a = FlowId.of(FlowType.DOUBLE);
-		FlowId<Integer> b = FlowId.of(FlowType.INT);
+		FlowId<Double> a = FlowId.of("a", FlowType.DOUBLE);
+		FlowId<Integer> b = FlowId.of("b", FlowType.INT);
 
 		FlowRecords records = FlowRecords.of(
 			Flow.of(a, 2.0),

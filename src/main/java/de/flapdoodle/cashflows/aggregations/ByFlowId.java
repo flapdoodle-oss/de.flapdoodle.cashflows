@@ -22,7 +22,7 @@ public abstract class ByFlowId<T> {
 	protected abstract Map<LocalDate, ByDate<T>> map();
 
 	@Value.Lazy
-	protected List<LocalDate> dates() {
+	public List<LocalDate> dates() {
 		return map().keySet().stream()
 			.sorted()
 			.collect(Collectors.toList());
@@ -48,6 +48,10 @@ public abstract class ByFlowId<T> {
 	@Value.Auxiliary
 	public FlowState<T> stateOf(LocalDate localDate) {
 		return Preconditions.checkNotNull(stateMap().get(localDate),"could not get state for %s", localDate);
+	}
+
+	public ByDate<T> get(LocalDate date) {
+		return map().get(date);
 	}
 
 	public ByFlowId<T> add(FlowRecord<T> record) {

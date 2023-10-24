@@ -6,12 +6,12 @@ import java.util.UUID;
 
 @Value.Immutable
 public interface FlowId<T> {
-	UUID id();
+	String id();
 	FlowType<T> type();
 
-	static <T> FlowId<T> of(FlowType<T> type) {
+	static <T> FlowId<T> of(String id, FlowType<T> type) {
 		return ImmutableFlowId.<T>builder()        
-			.id(UUID.randomUUID())
+			.id(id)
 			.type(type)
 			.build();
 	}
