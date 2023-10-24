@@ -12,6 +12,7 @@ public abstract class FlowType<T> {
 	public abstract BiFunction<T, T, T> reduce();
 
 	public static final FlowType<Double> DOUBLE=of(Double.class, Double::sum);
+	public static final FlowType<Integer> INT=of(Integer.class, Integer::sum);
 
 	public static <T> FlowType<T> of(Class<T> type, BiFunction<T, T, T> reduce) {
 		return ImmutableFlowType.of(type, reduce);

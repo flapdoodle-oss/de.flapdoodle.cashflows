@@ -1,7 +1,7 @@
 package de.flapdoodle.cashflows.engine;
 
 import de.flapdoodle.cashflows.calculation.Calculation;
-import de.flapdoodle.cashflows.calculation.FlowChange;
+import de.flapdoodle.cashflows.types.Change;
 import de.flapdoodle.cashflows.calculation.Transaction;
 import de.flapdoodle.cashflows.types.*;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class EngineTest {
 			.addFlows(Flow.of(dummy, 0d))
 			.addTransactions(Transaction.builder()
 				.section(eachDay)
-				.addCalculations(Calculation.of(dummy, duration -> FlowChange.of("add", 10.0d)))
+				.addCalculations(Calculation.of(dummy, duration -> Change.of("add", 10.0d)))
 				.build())
 			.build();
 

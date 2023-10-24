@@ -1,7 +1,7 @@
 package de.flapdoodle.cashflows.engine;
 
 import de.flapdoodle.cashflows.calculation.Calculation;
-import de.flapdoodle.cashflows.calculation.FlowChange;
+import de.flapdoodle.cashflows.types.Change;
 import de.flapdoodle.cashflows.calculation.FlowStateLookup;
 import de.flapdoodle.cashflows.calculation.Transaction;
 import de.flapdoodle.cashflows.types.Flow;
@@ -68,7 +68,7 @@ public abstract class Engine {
 	}
 
 	private static <T> FlowChangeEntry<T> calculate(Calculation<T> calculation, FlowStateLookup lookup, Duration duration) {
-		FlowChange<T> change = calculation.evaluate(lookup, duration);
+		Change<T> change = calculation.evaluate(lookup, duration);
 		return new FlowChangeEntry<>(calculation.destination(), change);
 	}
 
@@ -107,8 +107,8 @@ public abstract class Engine {
 
 	private static class FlowChangeEntry<T> {
 		private final FlowId<T> destination;
-		private final FlowChange<T> change;
-		public FlowChangeEntry(FlowId<T> destination, FlowChange<T> change) {
+		private final Change<T> change;
+		public FlowChangeEntry(FlowId<T> destination, Change<T> change) {
 			this.destination = destination;
 			this.change = change;
 		}
@@ -117,7 +117,7 @@ public abstract class Engine {
 			return destination;
 		}
 
-		public FlowChange<T> change() {
+		public Change<T> change() {
 			return change;
 		}
 	}

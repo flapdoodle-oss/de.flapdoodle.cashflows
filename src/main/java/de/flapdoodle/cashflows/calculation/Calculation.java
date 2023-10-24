@@ -1,5 +1,6 @@
 package de.flapdoodle.cashflows.calculation;
 
+import de.flapdoodle.cashflows.types.Change;
 import de.flapdoodle.cashflows.types.FlowId;
 import de.flapdoodle.cashflows.types.FlowState;
 import org.immutables.value.Value;
@@ -8,14 +9,14 @@ import java.time.Duration;
 
 public interface Calculation<T> {
 	FlowId<T> destination();
-	FlowChange<T> evaluate(FlowStateLookup flowStateLookup, Duration duration);
+	Change<T> evaluate(FlowStateLookup flowStateLookup, Duration duration);
 
 	interface Arg0<T> {
-		FlowChange<T> evaluate(Duration duration);
+		Change<T> evaluate(Duration duration);
 	}
 
 	interface Arg1<S, T> {
-		FlowChange<T> evaluate(FlowState<S> source, Duration duration);
+		Change<T> evaluate(FlowState<S> source, Duration duration);
 	}
 
 	@Value.Immutable
@@ -23,7 +24,7 @@ public interface Calculation<T> {
 		protected abstract Arg0<T> transformation();
 
 		@Override
-		public FlowChange<T> evaluate(FlowStateLookup flowStateLookup, Duration duration) {
+		public Change<T> evaluate(FlowStateLookup flowStateLookup, Duration duration) {
 			return transformation().evaluate(duration);
 		}
 	}
@@ -34,7 +35,7 @@ public interface Calculation<T> {
 		protected abstract Arg1<S, T> transformation();
 
 		@Override
-		public FlowChange<T> evaluate(FlowStateLookup flowStateLookup, Duration duration) {
+		public Change<T> evaluate(FlowStateLookup flowStateLookup, Duration duration) {
 			FlowState<S> s = flowStateLookup.stateOf(source());
 			return transformation().evaluate(s, duration);
 		}
