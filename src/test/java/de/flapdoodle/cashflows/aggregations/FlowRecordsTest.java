@@ -21,7 +21,9 @@ class FlowRecordsTest {
 			Flow.of(a, 2.0),
 			Flow.of(b, 1)
 		).add(
-			FlowRecord.of(a, now, Change.of("first", 2.0))
+			FlowRecord.of(a, now, Change.of("first", 1.0)))
+		.add(
+			FlowRecord.of(a, now, Change.of("second", 2.0))
 		);
 
 		assertThat(records.map())
@@ -36,7 +38,14 @@ class FlowRecordsTest {
 		ByDate<Double> byDate_a = byFlowId_a.map().get(now);
 
 		assertThat(byDate_a.changes())
-			.hasSize(1)
-			.containsExactly(Change.of("first", 2.0));
+			.hasSize(2)
+			.containsExactly(
+				Change.of("first", 1.0),
+				Change.of("second", 2.0)
+			);
+
+
+		assertThat(records.stateOf(a, now))
+			.isEqualTo(FlowState.of(2.0, 5.0));
 	}
 }
