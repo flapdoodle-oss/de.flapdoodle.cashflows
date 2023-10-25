@@ -5,10 +5,10 @@ import de.flapdoodle.cashflows.types.*;
 import de.flapdoodle.checks.Preconditions;
 import org.immutables.value.Value;
 
-import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -21,6 +21,16 @@ public abstract class FlowRecords {
 			.map(Maps.changeEntry(map(), record.id(), byFlowId -> ((ByFlowId<T>) byFlowId).add(record)))
 			.build();
 	}
+
+	@Value.Lazy
+	public List<LocalDate> dates() {
+		return map().values().stream()
+			.flatMap(it -> it.dates().stream())
+			.collect(Collectors.toSet())
+			.stream().sorted()
+			.collect(Collectors.toList());
+	}
+
 
 	@Value.Auxiliary
 	public <T> FlowState<T> stateOf(FlowId<T> id, LocalDate date) {

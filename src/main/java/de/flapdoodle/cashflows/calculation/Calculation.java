@@ -19,6 +19,10 @@ public interface Calculation<T> {
 		Change<T> evaluate(FlowState<S> source, Duration duration);
 	}
 
+	interface Arg2<A, B, T> {
+		Change<T> evaluate(FlowState<A> a, FlowState<B> b, Duration duration);
+	}
+
 	@Value.Immutable
 	abstract class Generator<T> implements Calculation<T> {
 		protected abstract Arg0<T> transformation();
@@ -41,6 +45,20 @@ public interface Calculation<T> {
 		}
 	}
 
+	@Value.Immutable
+	abstract class Merge2<A, B, T> implements Calculation<T> {
+		protected abstract FlowId<A> a();
+		protected abstract FlowId<B> b();
+		protected abstract Arg2<A, B, T> transformation();
+
+		@Override
+		public Change<T> evaluate(FlowStateLookup flowStateLookup, Duration duration) {
+			FlowState<A> a = flowStateLookup.stateOf(a());
+			FlowState<B> b = flowStateLookup.stateOf(b());
+			return transformation().evaluate(a, b, duration);
+		}
+	}
+
 	static <T> Generator<T> of(FlowId<T> dest, Arg0<T> transformation) {
 		return ImmutableGenerator.<T>builder()
 			.destination(dest)
@@ -52,6 +70,15 @@ public interface Calculation<T> {
 		return ImmutableSingle.<S, T>builder()
 			.destination(dest)
 			.source(source)
+			.transformation(transformation)
+			.build();
+	}
+
+	static <A, B, T> Merge2<A, B, T> of(FlowId<T> dest, FlowId<A> a, FlowId<B> b, Arg2<A, B, T> transformation) {
+		return ImmutableMerge2.<A, B, T>builder()
+			.destination(dest)
+			.a(a)
+			.b(b)
 			.transformation(transformation)
 			.build();
 	}

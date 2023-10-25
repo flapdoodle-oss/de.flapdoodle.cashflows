@@ -15,11 +15,17 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Function;
 
 @Value.Immutable
 public abstract class Engine {
 	protected abstract List<Flow<?>> flows();
 	protected abstract List<Transaction> transactions();
+
+	@Value.Default
+	protected Function<LocalDate, LocalDate> dateIterator() {
+		return it -> it.plusDays(1);
+	}
 
 	public FlowRecords calculate(LocalDate start, LocalDate end) {
 		Preconditions.checkArgument(start.isBefore(end),"%s >= %s", start, end);
@@ -35,20 +41,24 @@ public abstract class Engine {
 			for (Transaction transaction : transactions()) {
 				if (transaction.section().isActive(current)) {
 					LocalDate transactionLastRun = Optional.ofNullable(lastRun.get(transaction))
-						.orElse(current.minusDays(1));
+						.orElse(start);
+					LocalDate latestResultsBeforeCurrent = current.minusDays(1);
+					FlowStateLookup flowStateLookup = records.stateLookupOf(transactionLastRun, latestResultsBeforeCurrent);
+
 					Duration duration = Duration.ofDays(ChronoUnit.DAYS.between(transactionLastRun, current));
-					FlowStateLookup flowStateLookup = records.stateLookupOf(transactionLastRun, current);
 
 					for (Calculation<?> calculation : transaction.calculations()) {
 						FlowChangeEntry<?> entry = calculate(calculation, flowStateLookup, duration);
 						changes.add(entry);
 					}
+
+					lastRun.put(transaction, current);
 				}
 			}
 
 			records = merge(records, current, changes);
 
-			current=current.plusDays(1);
+			current=dateIterator().apply(current);
 		} while (!current.isAfter(end));
 
 		return records;

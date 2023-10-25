@@ -47,6 +47,10 @@ public abstract class ByFlowId<T> {
 
 	@Value.Auxiliary
 	public FlowState<T> stateOf(LocalDate localDate) {
+		// TODO .. this is more a hack
+		if (map().isEmpty()) {
+			return FlowState.of(flow().start(), flow().start());
+		}
 		return Preconditions.checkNotNull(stateMap().get(localDate),"could not get state for %s", localDate);
 	}
 
