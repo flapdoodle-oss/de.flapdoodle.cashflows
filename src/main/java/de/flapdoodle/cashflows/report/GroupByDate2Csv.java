@@ -5,9 +5,11 @@ import de.flapdoodle.cashflows.records.ByIndex;
 import de.flapdoodle.cashflows.records.Records;
 import de.flapdoodle.cashflows.types.Change;
 import de.flapdoodle.cashflows.types.FlowId;
+import de.flapdoodle.cashflows.types.FlowState;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class GroupByDate2Csv implements RecordsRenderer<LocalDate> {
@@ -38,7 +40,11 @@ public class GroupByDate2Csv implements RecordsRenderer<LocalDate> {
 //				for (Change<?> change : byIndex.changes()) {
 //					System.out.println("    " + change.name() + ": " + change.delta());
 //				}
-				sb.append(toCSV.apply(byFlowId.stateOf(offset).after()));
+				FlowState flowState = byFlowId.stateOf(offset);
+				BiFunction minus = id.type().minus();
+//				sb.append(toCSV.apply(flowState.after()));
+//				sb.append(";");
+				sb.append(toCSV.apply(minus.apply(flowState.after(), flowState.before())));
 				sb.append(";");
 			}
 			sb.append("\n");

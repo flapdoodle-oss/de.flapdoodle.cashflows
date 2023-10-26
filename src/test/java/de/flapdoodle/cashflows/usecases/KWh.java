@@ -20,8 +20,4 @@ public abstract class KWh {
 	public static KWh of(double value) {
 		return ImmutableKWh.of(value);
 	}
-
-	public static KWh reduce(KWh a, KWh b) {
-		return of(a.value() + b.value());
-	}
 }

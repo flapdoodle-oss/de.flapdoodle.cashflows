@@ -17,7 +17,7 @@ public abstract class ByIndex<T> {
 	public Optional<T> aggregatedDelta() {
 		return changes().stream()
 			.map(Change::delta)
-			.reduce(type().reduce()::apply);
+			.reduce(type().plus()::apply);
 	}
 
 	public ByIndex<T> add(Change<T> record) {

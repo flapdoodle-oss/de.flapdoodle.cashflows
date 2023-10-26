@@ -29,7 +29,7 @@ public class PVCaseTest {
 	public void dummy() {
 		LocalDate now = LocalDate.of(2023, Month.OCTOBER, 23);
 
-		FlowType<KWh> kWhFlowType = FlowType.of(KWh.class, KWh::reduce);
+		FlowType<KWh> kWhFlowType = FlowType.of(KWh.class, KWh::plus, KWh::minus);
 
 		FlowId<KWh> pv = FlowId.of("PV", kWhFlowType);
 		FlowId<KWh> grid = FlowId.of("Grid", kWhFlowType);
@@ -69,7 +69,7 @@ public class PVCaseTest {
 	@Test
 	public void simulation() {
 		LocalDate now = LocalDate.of(2023, Month.SEPTEMBER, 1);
-		FlowType<KWh> kWhFlowType = FlowType.of(KWh.class, KWh::reduce);
+		FlowType<KWh> kWhFlowType = FlowType.of(KWh.class, KWh::plus, KWh::minus);
 
 		FlowId<KWh> pv = FlowId.of("PV", kWhFlowType);
 		FlowId<KWh> consumption = FlowId.of("Consumption", kWhFlowType);

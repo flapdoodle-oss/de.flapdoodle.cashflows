@@ -8,13 +8,17 @@ import java.util.function.BiFunction;
 public abstract class FlowType<T> {
 	@Value.Parameter
 	public abstract Class<T> type();
+
 	@Value.Parameter
-	public abstract BiFunction<T, T, T> reduce();
+	public abstract BiFunction<T, T, T> plus();
 
-	public static final FlowType<Double> DOUBLE=of(Double.class, Double::sum);
-	public static final FlowType<Integer> INT=of(Integer.class, Integer::sum);
+	@Value.Parameter
+	public abstract BiFunction<T, T, T> minus();
 
-	public static <T> FlowType<T> of(Class<T> type, BiFunction<T, T, T> reduce) {
-		return ImmutableFlowType.of(type, reduce);
+	public static final FlowType<Double> DOUBLE = of(Double.class, Double::sum, (a, b) -> a - b);
+	public static final FlowType<Integer> INT = of(Integer.class, Integer::sum, (a, b) -> a - b);
+
+	public static <T> FlowType<T> of(Class<T> type, BiFunction<T, T, T> plus, BiFunction<T, T, T> minus) {
+		return ImmutableFlowType.of(type, plus, minus);
 	}
 }

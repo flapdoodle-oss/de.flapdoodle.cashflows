@@ -35,7 +35,7 @@ public abstract class ByFlowId<T> {
 			Optional<T> delta = map().get(date).aggregatedDelta();
 			T before = current;
 			current = delta.isPresent()
-				? flow().id().type().reduce().apply(current, delta.get())
+				? flow().id().type().plus().apply(current, delta.get())
 				: current;
 			builder.put(date, FlowState.of(before, current));
 		}
