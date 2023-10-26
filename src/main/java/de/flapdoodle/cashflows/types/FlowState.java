@@ -3,11 +3,9 @@ package de.flapdoodle.cashflows.types;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface FlowState<T> extends HasFlowStateChange<T> {
-	@Override
+public interface FlowState<T> {
 	T before();
 	
-	@Override
 	T after();
 
 	static <T> FlowState<T> of(T before, T after) {

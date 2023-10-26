@@ -1,4 +1,4 @@
-package de.flapdoodle.cashflows.aggregations;
+package de.flapdoodle.cashflows.records;
 
 import de.flapdoodle.cashflows.types.Change;
 import de.flapdoodle.cashflows.types.FlowType;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Value.Immutable
-public abstract class ByDate<T> {
+public abstract class ByIndex<T> {
 	@Value.Parameter
 	protected abstract FlowType<T> type();
 	public abstract List<Change<T>> changes();
@@ -20,14 +20,14 @@ public abstract class ByDate<T> {
 			.reduce(type().reduce()::apply);
 	}
 
-	public ByDate<T> add(Change<T> record) {
-		return ImmutableByDate.<T>builder()
+	public ByIndex<T> add(Change<T> record) {
+		return ImmutableByIndex.<T>builder()
 			.from(this)
 			.addChanges(record)
 			.build();
 	}
 
-	public static <T> ByDate<T> of(FlowType<T> type) {
-		return ImmutableByDate.of(type);
+	public static <T> ByIndex<T> of(FlowType<T> type) {
+		return ImmutableByIndex.of(type);
 	}
 }

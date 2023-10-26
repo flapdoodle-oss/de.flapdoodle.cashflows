@@ -1,16 +1,16 @@
 package de.flapdoodle.cashflows.calculation;
 
-import de.flapdoodle.cashflows.types.DateRange;
+import de.flapdoodle.cashflows.types.Range;
 import org.immutables.value.Value;
 
 import java.util.List;
 
 @Value.Immutable
-public interface Transaction {
-	DateRange section();
-	List<Calculation<?>> calculations();
+public interface Transaction<T extends Comparable<? super T>> {
+	Range<T> section();
+	List<Calculation<T, ?>> calculations();
 
-	static ImmutableTransaction.Builder builder() {
+	static <T extends Comparable<? super T>> ImmutableTransaction.Builder<T> builder() {
 		return ImmutableTransaction.builder();
 	}
 }

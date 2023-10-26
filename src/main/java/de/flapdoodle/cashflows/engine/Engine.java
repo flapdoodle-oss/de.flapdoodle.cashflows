@@ -1,83 +1,86 @@
 package de.flapdoodle.cashflows.engine;
 
-import de.flapdoodle.cashflows.aggregations.FlowRecords;
 import de.flapdoodle.cashflows.calculation.Calculation;
 import de.flapdoodle.cashflows.calculation.FlowStateLookup;
 import de.flapdoodle.cashflows.calculation.Transaction;
+import de.flapdoodle.cashflows.iterator.LinearIterator;
+import de.flapdoodle.cashflows.records.Record;
+import de.flapdoodle.cashflows.records.Records;
 import de.flapdoodle.cashflows.types.Change;
 import de.flapdoodle.cashflows.types.Flow;
 import de.flapdoodle.cashflows.types.FlowId;
-import de.flapdoodle.cashflows.types.FlowRecord;
+import de.flapdoodle.cashflows.types.Range;
 import de.flapdoodle.checks.Preconditions;
+import org.immutables.builder.Builder;
 import org.immutables.value.Value;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.function.Function;
 
 @Value.Immutable
-public abstract class Engine {
+public abstract class Engine<T extends Comparable<? super T>> {
+	@Builder.Parameter
+	protected abstract LinearIterator<T> iterator();
+
 	protected abstract List<Flow<?>> flows();
-	protected abstract List<Transaction> transactions();
+	protected abstract List<Transaction<T>> transactions();
 
-	@Value.Default
-	protected Function<LocalDate, LocalDate> dateIterator() {
-		return it -> it.plusDays(1);
-	}
+	public Records<T> calculate(T start, T end) {
+		Preconditions.checkArgument(start.compareTo(end) < 0,"%s >= %s", start, end);
 
-	public FlowRecords calculate(LocalDate start, LocalDate end) {
-		Preconditions.checkArgument(start.isBefore(end),"%s >= %s", start, end);
+		Records<T> records = Records.of(start, iterator(), flows());
 
-		FlowRecords records = FlowRecords.of(flows());
+		Map<Transaction<T>, Integer> lastRun=new LinkedHashMap<>();
+		Map<Transaction<T>, Range<T>> activeRange=new LinkedHashMap<>();
+		transactions().forEach(t -> activeRange.put(t, t.section()));
 
-		Map<Transaction, LocalDate> lastRun=new LinkedHashMap<>();
-		LocalDate current=start;
+		int loop=0;
+		T current=iterator().next(start, loop);
 
 		do {
 			List<FlowChangeEntry<?>> changes=new ArrayList<>();
 
-			for (Transaction transaction : transactions()) {
-				if (transaction.section().isActive(current)) {
-					LocalDate transactionLastRun = Optional.ofNullable(lastRun.get(transaction))
-						.orElse(start);
-					LocalDate latestResultsBeforeCurrent = current.minusDays(1);
+			for (Transaction<T> transaction : transactions()) {
+				Range<T> range = activeRange.get(transaction);
+				while (range.isActive(current)) {
+					int transactionLastRun = Optional.ofNullable(lastRun.get(transaction)).orElse(loop);
+					int latestResultsBeforeCurrent = loop;
+
 					FlowStateLookup flowStateLookup = records.stateLookupOf(transactionLastRun, latestResultsBeforeCurrent);
 
-					Duration duration = Duration.ofDays(ChronoUnit.DAYS.between(transactionLastRun, current));
-
-					for (Calculation<?> calculation : transaction.calculations()) {
-						FlowChangeEntry<?> entry = calculate(calculation, flowStateLookup, duration);
+					for (Calculation<T, ?> calculation : transaction.calculations()) {
+						FlowChangeEntry<?> entry = calculate(calculation, flowStateLookup, iterator().next(start, transactionLastRun), current);
 						changes.add(entry);
 					}
 
-					lastRun.put(transaction, current);
+					lastRun.put(transaction, loop);
+					range=range.nextRange();
 				}
+				activeRange.put(transaction, range);
 			}
 
-			records = merge(records, current, changes);
+			records = merge(records, loop, changes);
 
-			current=dateIterator().apply(current);
-		} while (!current.isAfter(end));
+			loop++;
+			current=iterator().next(start, loop);
+		} while (current.compareTo(end) < 0);
 
 		return records;
 	}
 
-	private FlowRecords merge(FlowRecords records, LocalDate now, List<FlowChangeEntry<?>> changes) {
-		FlowRecords current = records;
+	private Records<T> merge(Records<T> records, int offset, List<FlowChangeEntry<?>> changes) {
+		Records<T> current = records;
 		for (FlowChangeEntry<?> it : changes) {
-			current=current.add(asRecord(now, it));
+			current=current.add(asRecord(offset, it));
 		}
 		return current;
 	}
 
-	private static <T> FlowRecord<T> asRecord(LocalDate now, FlowChangeEntry<T> it) {
-		return FlowRecord.of(it.destination, now, it.change);
+	private static <T> Record<T> asRecord(int offset, FlowChangeEntry<T> it) {
+		return Record.of(it.destination(), offset, it.change());
 	}
 
-	private static <T> FlowChangeEntry<T> calculate(Calculation<T> calculation, FlowStateLookup lookup, Duration duration) {
-		Change<T> change = calculation.evaluate(lookup, duration);
+	private static <I extends Comparable<? super I>, T> FlowChangeEntry<T> calculate(Calculation<I, T> calculation, FlowStateLookup lookup, I lastRun, I now) {
+		Change<T> change = calculation.evaluate(lastRun, now, lookup);
 		return new FlowChangeEntry<>(calculation.destination(), change);
 	}
 
@@ -98,7 +101,7 @@ public abstract class Engine {
 		}
 	}
 
-	public static ImmutableEngine.Builder builder() {
-		return ImmutableEngine.builder();
+	public static <T extends Comparable<? super T>> ImmutableEngine.Builder<T> builder(LinearIterator<T> iterator) {
+		return ImmutableEngine.builder(iterator);
 	}
 }
