@@ -1,6 +1,6 @@
 package de.flapdoodle.cashflows.usecases;
 
-import de.flapdoodle.cashflows.types.Ease;
+import de.flapdoodle.cashflows.generators.Ease;
 
 public abstract class Sun {
 

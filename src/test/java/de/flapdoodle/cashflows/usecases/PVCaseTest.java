@@ -2,6 +2,7 @@ package de.flapdoodle.cashflows.usecases;
 
 import de.flapdoodle.cashflows.calculation.Calculation;
 import de.flapdoodle.cashflows.calculation.Transaction;
+import de.flapdoodle.cashflows.generators.Ease;
 import de.flapdoodle.cashflows.engine.Engine;
 import de.flapdoodle.cashflows.iterator.ForwardIterators;
 import de.flapdoodle.cashflows.iterator.LinearIterators;

@@ -1,6 +1,8 @@
-package de.flapdoodle.cashflows.types;
+package de.flapdoodle.cashflows.generators;
 
 import org.junit.jupiter.api.Test;
+
+import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -157,39 +159,37 @@ class EaseTest {
 				+ "-------------------------------------------------------------------");
 	}
 
+	@Test
+	public void gausianNoise() {
+		Random random = new Random(1337);
+		assertThat(asAsciiArt(64, 16, x -> random.nextGaussian()))
+			.isEqualTo(""
+				+ "-------------------------------------------------------------------\n"
+				+ "|                                                             *   |\n"
+				+ "|                                                                 |\n"
+				+ "|                                                                 |\n"
+				+ "|                                                                 |\n"
+				+ "|                *                                        *       |\n"
+				+ "|                               *          *                      |\n"
+				+ "|                                                                 |\n"
+				+ "|                                  *                              |\n"
+				+ "|     *              *                                       *    |\n"
+				+ "|                                            *                    |\n"
+				+ "|                           *                                     |\n"
+				+ "|                                                                 |\n"
+				+ "|                                               *   * *           |\n"
+				+ "|          *  *     *                                             |\n"
+				+ "|                              *                           *      |\n"
+				+ "|            *             *                   *         *        |\n"
+				+ "|       *                                 *                       |\n"
+				+ "-------------------------------------------------------------------");
+	}
+
 	private static String asAsciiArt(int size, Ease easeFunction) {
 		return asAsciiArt(size, size, easeFunction);
 	}
 
 	private static String asAsciiArt(int width, int heigth, Ease easeFunction) {
-		double[] values = new double[width + 1];
-		for (int i = 0; i <= width; i++) {
-			double x = 1.0d * i / width;
-			values[i] = easeFunction.map(x);
-		}
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i <= width + 2; i++) {
-			sb.append("-");
-		}
-		sb.append("\n");
-		for (int y = heigth; y >= 0; y--) {
-			double maxY = 1.0d * y / heigth;
-			double minY = 1.0d * (y - 1) / heigth;
-
-			sb.append("|");
-			for (int x = 0; x <= width; x++) {
-				double value = values[x];
-				if (value > minY && value <= maxY) {
-					sb.append("*");
-				} else {
-					sb.append(" ");
-				}
-			}
-			sb.append("|\n");
-		}
-		for (int i = 0; i <= width + 2; i++) {
-			sb.append("-");
-		}
-		return sb.toString();
+		return AsciiArt.fromZeroToOne().asAsciiArt(width, heigth, easeFunction::map);
 	}
 }

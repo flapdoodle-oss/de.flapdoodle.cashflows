@@ -1,8 +1,6 @@
-package de.flapdoodle.cashflows.types;
+package de.flapdoodle.cashflows.generators;
 
 import de.flapdoodle.checks.Preconditions;
-
-import java.util.function.Function;
 
 @FunctionalInterface
 public interface Ease {
