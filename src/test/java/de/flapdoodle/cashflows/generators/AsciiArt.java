@@ -3,10 +3,22 @@ package de.flapdoodle.cashflows.generators;
 public class AsciiArt {
 	private final double minX;
 	private final double maxX;
+	private final double minY;
+	private final double maxY;
+	private final double deltaX;
+	private final double deltaY;
 
 	private AsciiArt(double minX, double maxX) {
+		this(minX, maxX, 0.0, 1.0);
+	}
+
+	private AsciiArt(double minX, double maxX, double minY, double maxY) {
 		this.minX = minX;
 		this.maxX = maxX;
+		this.minY = minY;
+		this.maxY = maxY;
+		this.deltaX = maxX - minX;
+		this.deltaY = maxY - minY;
 	}
 
 	public interface MapDouble {
@@ -21,7 +33,7 @@ public class AsciiArt {
 		double[] values = new double[width + 1];
 		for (int i = 0; i <= width; i++) {
 			double x = 1.0d * i / width;
-			values[i] = function.map(x * (maxX - minX) + minX);
+			values[i] = function.map(x * deltaX + minX);
 		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i <= width + 2; i++) {
@@ -29,13 +41,15 @@ public class AsciiArt {
 		}
 		sb.append("\n");
 		for (int y = heigth; y >= 0; y--) {
-			double maxY = 1.0d * y / heigth;
-			double minY = 1.0d * (y - 1) / heigth;
+			double relUpperLimitY = 1.0d * y / heigth;
+			double relLowerLimitY = 1.0d * (y - 1) / heigth;
+			double upperLimitY = relUpperLimitY*deltaY+minY;
+			double lowerLimitY = relLowerLimitY*deltaY+minY;
 
 			sb.append("|");
 			for (int x = 0; x <= width; x++) {
 				double value = values[x];
-				if (value > minY && value <= maxY) {
+				if (value > lowerLimitY && value <= upperLimitY) {
 					sb.append("*");
 				} else {
 					sb.append(" ");
@@ -47,6 +61,10 @@ public class AsciiArt {
 			sb.append("-");
 		}
 		return sb.toString();
+	}
+
+	public static AsciiArt with(double minX, double maxX, double minY, double maxY) {
+		return new AsciiArt(minX, maxX, minY, maxY);
 	}
 
 	public static AsciiArt with(double minX, double maxX) {

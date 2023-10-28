@@ -1,4 +1,4 @@
-package de.flapdoodle.cashflows.usecases;
+package de.flapdoodle.cashflows.usescases.types;
 
 import org.immutables.value.Value;
 
