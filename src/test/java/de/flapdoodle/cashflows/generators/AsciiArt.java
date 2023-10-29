@@ -2,9 +2,7 @@ package de.flapdoodle.cashflows.generators;
 
 public class AsciiArt {
 	private final double minX;
-	private final double maxX;
 	private final double minY;
-	private final double maxY;
 	private final double deltaX;
 	private final double deltaY;
 
@@ -14,9 +12,7 @@ public class AsciiArt {
 
 	private AsciiArt(double minX, double maxX, double minY, double maxY) {
 		this.minX = minX;
-		this.maxX = maxX;
 		this.minY = minY;
-		this.maxY = maxY;
 		this.deltaX = maxX - minX;
 		this.deltaY = maxY - minY;
 	}
