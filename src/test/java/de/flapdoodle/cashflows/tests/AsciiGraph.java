@@ -44,7 +44,7 @@ public class AsciiGraph {
 		return sb.toString();
 	}
 
-	interface RenderContext {
+	public interface RenderContext {
 		void point(char s, double x, double y);
 	}
 }

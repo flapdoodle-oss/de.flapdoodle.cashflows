@@ -22,6 +22,11 @@ public abstract class KWh {
 		return KWh.of(value() * factor);
 	}
 
+	@Value.Auxiliary
+	public KWh divide(double divisor) {
+		return KWh.of(value() / divisor);
+	}
+
 	public static KWh of(double value) {
 		return ImmutableKWh.of(value);
 	}

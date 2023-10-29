@@ -1,7 +1,6 @@
 package de.flapdoodle.cashflows.usescases.pv;
 
 import de.flapdoodle.cashflows.generators.Ease;
-import de.flapdoodle.cashflows.usescases.types.KW;
 import de.flapdoodle.cashflows.usescases.types.KWh;
 
 public abstract class Sun {
@@ -30,6 +29,10 @@ public abstract class Sun {
 		double maxkWhproKW = 110.0 / 30.0;
 		double minkWhproKW = 8.37 / 30.0;
 		return KWh.of(Sun.normal(dayOfYear, minkWhproKW, maxkWhproKW));
+	}
+
+	public static KWh pvPerKWpPerSunshineHour(int dayOfYear) {
+		return pvPerKWp(dayOfYear).divide(sunshineHours(dayOfYear));
 	}
 
 }
