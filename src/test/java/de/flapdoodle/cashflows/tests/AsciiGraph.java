@@ -20,12 +20,14 @@ public class AsciiGraph {
 		Arrays.fill(content, ' ');
 		Arrays.fill(line, '-');
 
+		Area renderArea = Area.of(0.0, width-1.0, 0.0, height-1.0);
+
 		withRenderContext.accept((s, x, y) -> {
-			Position rel = area.relativePosition(Position.of(x, y));
-			if (rel.x() >= 0 && rel.x() <= 1.0) {
-				if (rel.y() >= 0 && rel.y() <= 1.0) {
-					int w = (int) (rel.x() * (width - 1));
-					int h = (int) (rel.y() * (height - 1));
+			Position dest = area.mapTo(Position.of(x, y), renderArea);
+			if (dest.x()>=0 && dest.x()<=width) {
+				if (dest.y()>=0 && dest.y()<=height) {
+					int h = (int) dest.y();
+					int w = (int) dest.x();
 					int index = (height - 1 - h) * width + w;
 					content[index] = s;
 				}

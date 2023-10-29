@@ -25,6 +25,16 @@ public abstract class Area {
 		return 1.0;
 	}
 
+	@Value.Lazy
+	protected double deltaX() {
+		return maxX() - minX();
+	}
+
+	@Value.Lazy
+	protected double deltaY() {
+		return maxY() - minY();
+	}
+
 	@Value.Check
 	protected void check() {
 		Preconditions.checkArgument(minX() < maxX(), "minX>=maxX: %s >= %s", minX(), maxX());
@@ -32,11 +42,10 @@ public abstract class Area {
 	}
 
 	@Value.Auxiliary
-	public Position relativePosition(Position p) {
-		double deltaX = maxX() - minX();
-		double deltaY = maxY() - minY();
-
-		return Position.of((p.x() - minX()) / deltaX, (p.y() - minY()) / deltaY);
+	public Position mapTo(Position position, Area destination) {
+		double destX = (position.x() - minX()) * destination.deltaX() / deltaX() + destination.minX();
+		double destY = (position.y() - minY()) * destination.deltaY() / deltaY() + destination.minY();
+		return Position.of(destX, destY);
 	}
 
 	public static ImmutableArea of(double minX, double maxX, double minY, double maxY) {

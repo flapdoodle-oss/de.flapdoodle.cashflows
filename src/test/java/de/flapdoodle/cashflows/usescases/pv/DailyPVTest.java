@@ -42,15 +42,34 @@ class DailyPVTest {
 
 		FlowType<KWh> kWhFlowType = FlowType.of(KWh.class, KWh::plus, KWh::minus);
 		FlowId<KWh> pv = FlowId.of("PV", kWhFlowType);
+		FlowId<Double> isCloudy=FlowId.of("Cloudy", FlowType.DOUBLE);
 
 
 		LocalDateTime startOfDay = LocalDateTime.of(2023, Month.OCTOBER, 29, 0, 0, 0, 0);
 
 		Engine<LocalDateTime> engine = Engine.builder(LinearIterators.EACH_HOUR)
 			.addFlows(Flow.of(pv, KWh.of(0)))
+			.addFlows(Flow.of(isCloudy, 0.0))
 			.addTransactions(Transaction.<LocalDateTime>builder()
 				.section(Range.of(startOfDay, ForwardIterators.EACH_HOUR))
-				.addCalculations(Calculation.of(pv, (lastRun, now) -> {
+				.addCalculations(Calculation.of(isCloudy, (lastRun, now) -> {
+					int dayOfYear = now.getDayOfYear();
+
+					double cloudHours = Sun.cloudyHours(dayOfYear);
+					double isHourWithCloudProbability = cloudHours / 24.0;
+					double scale = isHourWithCloudProbability >= 0.5
+						? (1-isHourWithCloudProbability) * 2.0
+						: isHourWithCloudProbability * 2.0;
+					double offset = isHourWithCloudProbability - 0.5;
+					double realCloudHours = random.map(now.getHour()) * scale + offset;
+					if (realCloudHours<0) realCloudHours=0;
+					if (realCloudHours>24) realCloudHours=24;
+					return Change.of("cloudy", realCloudHours);
+				}))
+				.build())
+			.addTransactions(Transaction.<LocalDateTime>builder()
+				.section(Range.of(startOfDay, ForwardIterators.EACH_HOUR))
+				.addCalculations(Calculation.of(pv, isCloudy, (lastRun, now, c) -> {
 					int dayOfYear = now.getDayOfYear();
 
 					int dayLen = (int) Sun.dayLength(dayOfYear);
@@ -58,12 +77,12 @@ class DailyPVTest {
 					int end = start + dayLen;
 					long hoursSinceLastRun = ChronoUnit.HOURS.between(lastRun, now);
 					boolean isDay = start <= now.getHour() && now.getHour()<=end;
-					int cloudHours = (int) Sun.cloudyHours(dayOfYear);
-					System.out.println("cloudHoursToday: "+Generator.map(random, now.getHour()+24*dayOfTheYear, 0, cloudHours*2));
-					
+					double cloudHours = c.after()-c.before();
+//					System.out.println("cloud hours: "+cloudHours);
+
 					if (isDay) {
 						KWh kWPerKWp = Sun.pvPerKWpPerSunshineHour(dayOfYear);
-						return Change.of("pv", kWPerKWp.multiply(8.25* hoursSinceLastRun));
+						return Change.of("pv", kWPerKWp.multiply(8.25* (hoursSinceLastRun - cloudHours)));
 					}
 					return Change.of("pv", KWh.of(0));
 				}))
@@ -72,10 +91,13 @@ class DailyPVTest {
 
 		Records<LocalDateTime> report = engine.calculate(startOfDay, startOfDay.plusDays(1));
 
-		System.out.println(AsciiGraph.of(Area.of(0, 23, 0, 10.0)).render(120, 12, renderContext -> {
+		System.out.println(AsciiGraph.of(Area.of(0, 23, -1.0, 4.0)).render(24, 12, renderContext -> {
 			for (int i = 0; i < 24; i++) {
 				FlowState<KWh> state = report.stateOf(pv, i);
 				renderContext.point('*', i, state.after().value()-state.before().value());
+
+				FlowState<Double> cloudy = report.stateOf(isCloudy, i);
+//				renderContext.point('#', i, cloudy.after()-cloudy.before());
 			}
 		}));
 	}
