@@ -1,24 +1,20 @@
-package de.flapdoodle.cashflows.usescases.pv;
+package de.flapdoodle.cashflows.usecases.pv;
 
 import de.flapdoodle.cashflows.calculation.Calculation;
 import de.flapdoodle.cashflows.calculation.Transaction;
 import de.flapdoodle.cashflows.engine.Engine;
-import de.flapdoodle.cashflows.engine.ImmutableEngine;
 import de.flapdoodle.cashflows.generators.Ease;
 import de.flapdoodle.cashflows.iterator.ForwardIterators;
 import de.flapdoodle.cashflows.iterator.LinearIterators;
 import de.flapdoodle.cashflows.records.Records;
-import de.flapdoodle.cashflows.report.GroupByDate2SystemOut;
 import de.flapdoodle.cashflows.tests.Area;
 import de.flapdoodle.cashflows.tests.AsciiGraph;
 import de.flapdoodle.cashflows.types.*;
-import de.flapdoodle.cashflows.usescases.types.KWh;
+import de.flapdoodle.cashflows.usecases.types.KWh;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Arrays;
 
 public class CarsTest {
 

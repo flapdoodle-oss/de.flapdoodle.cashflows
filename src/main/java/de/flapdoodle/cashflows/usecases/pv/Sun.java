@@ -1,7 +1,7 @@
-package de.flapdoodle.cashflows.usescases.pv;
+package de.flapdoodle.cashflows.usecases.pv;
 
 import de.flapdoodle.cashflows.generators.Ease;
-import de.flapdoodle.cashflows.usescases.types.KWh;
+import de.flapdoodle.cashflows.usecases.types.KWh;
 
 public abstract class Sun {
 

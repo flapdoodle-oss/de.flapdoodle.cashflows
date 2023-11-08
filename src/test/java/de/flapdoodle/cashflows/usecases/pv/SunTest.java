@@ -1,4 +1,4 @@
-package de.flapdoodle.cashflows.usescases.pv;
+package de.flapdoodle.cashflows.usecases.pv;
 
 import de.flapdoodle.cashflows.generators.AsciiArt;
 import org.junit.jupiter.api.Test;

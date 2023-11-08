@@ -1,4 +1,4 @@
-package de.flapdoodle.cashflows.usescases.pv;
+package de.flapdoodle.cashflows.usecases.pv;
 
 import de.flapdoodle.cashflows.calculation.Calculation;
 import de.flapdoodle.cashflows.calculation.Transaction;
@@ -10,7 +10,7 @@ import de.flapdoodle.cashflows.records.Records;
 import de.flapdoodle.cashflows.tests.Area;
 import de.flapdoodle.cashflows.tests.AsciiGraph;
 import de.flapdoodle.cashflows.types.*;
-import de.flapdoodle.cashflows.usescases.types.KWh;
+import de.flapdoodle.cashflows.usecases.types.KWh;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
