@@ -1,5 +1,6 @@
 package de.flapdoodle.cashflows.usecases.pv;
 
+import de.flapdoodle.cashflows.types.Id;
 import de.flapdoodle.cashflows.usecases.types.KW;
 import de.flapdoodle.cashflows.usecases.types.KWh;
 import de.flapdoodle.formula.calculate.MappedValue;
@@ -10,6 +11,7 @@ import de.flapdoodle.formula.solver.Result;
 import de.flapdoodle.formula.solver.Solver;
 import de.flapdoodle.formula.solver.ValueDependencyGraphBuilder;
 import de.flapdoodle.formula.solver.ValueGraph;
+import de.flapdoodle.reflection.TypeInfo;
 import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.Test;
 
@@ -17,14 +19,27 @@ import java.time.LocalDate;
 import java.time.Month;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
-class PVTest {
+class HouseTest {
 
     @Test
     void sample() {
-        ImmutablePV testee = PV.builder()
+        LocalDate now = LocalDate.of(2023, Month.NOVEMBER, 1);
+
+        ImmutablePV pv = PV.builder()
+                .id(Id.of(TypeInfo.of(PV.class)).withAsHumanReadable("Id(pv0)"))
                 .kwpValue(KW.of(8.25))
+                .build();
+
+        ImmutableLocation location = Location.builder()
+                .localDateValue(now)
+                .build();
+
+        ImmutableHouse testee = House.builder()
+                .summerConsumption(KWh.of(4))
+                .winterConsumption(KWh.of(8))
+                .pv(pv)
+                .location(location)
                 .build();
 
         Rules rules = testee.rules(Rules.empty());
@@ -36,17 +51,14 @@ class PVTest {
         System.out.println(explained);
         System.out.println("---------------------");
 
-        LocalDate now = LocalDate.of(2023, Month.NOVEMBER, 1);
 
         Result solved = Solver.solve(graph, StrictValueLookup.of(
-                MappedValue.of(Location.localDate(), now),
-                MappedValue.of(Location.pvPerKWp(), KWh.of(1.0))
-//                MappedValue.of(testee.dayOfTheYear(), 300),
+                MappedValue.of(Location.dayOfTheYear(), 300)
 //                MappedValue.of(testee.kwp(), KW.of(8.25))
         ));
 
-        KWh energy = solved.get(testee.energy());
+        KWh energy = solved.get(testee.consumption());
 
-        assertThat(energy.value()).isCloseTo(8.25, Percentage.withPercentage(1));
+        assertThat(energy.value()).isCloseTo(4.568, Percentage.withPercentage(1));
     }
 }

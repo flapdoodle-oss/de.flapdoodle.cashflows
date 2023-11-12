@@ -22,11 +22,6 @@ public abstract class PV implements Part {
 
     protected abstract KW kwpValue();
 
-    @org.immutables.value.Value.Lazy
-    protected ValueSink<Integer> dayOfTheYear() {
-        return Value.named("dayOfTheYear", Integer.class).relatedTo(id());
-    }
-
     @org.immutables.value.Value.Default
     public Related<KW, Id<PV>> kwp() {
         return Value.named("KWp", KW.class).relatedTo(id());
@@ -38,11 +33,9 @@ public abstract class PV implements Part {
     }
 
     @Override
-    public Rules rules() {
-        return Rules.empty()
-                .add(Calculate.value(dayOfTheYear()).requiring(Location.localDate())
-                        .by(LocalDate::getDayOfYear,"dayOfTheYear"))
-                .add(Calculate.value(kwp()).by(this::kwpValue))
+    public Rules rules(Rules source) {
+        return source
+                .add(Calculate.value(kwp()).by(this::kwpValue,"KWp"))
                 .add(Calculate.value(energy()).using(Location.pvPerKWp(), kwp())
                         .ifAllSetBy((kWh, kw) -> kWh.multiply(kw.value()),"pvPerKWp*kwp"))
                 ;

@@ -29,7 +29,7 @@ class LocationTest {
                 .localDateValue(now)
                 .build();
 
-        Rules rules = testee.rules();
+        Rules rules = testee.rules(Rules.empty());
 
         ValueGraph graph = ValueDependencyGraphBuilder.build(rules);
 

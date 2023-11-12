@@ -4,6 +4,6 @@ import de.flapdoodle.formula.rules.Rules;
 import org.immutables.value.Value;
 
 public interface Part {
-    @Value.Lazy
-    Rules rules();
+    @Value.Auxiliary
+    Rules rules(Rules src);
 }

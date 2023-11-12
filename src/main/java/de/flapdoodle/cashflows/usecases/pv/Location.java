@@ -15,15 +15,10 @@ public abstract class Location implements Part {
         return LocalDate.now();
     }
 
-    @org.immutables.value.Value.Lazy
-    protected Related<Integer, Class<Location>> dayOfTheYear() {
-        return Value.named("dayOfTheYear", Integer.class).relatedTo(Location.class);
-    }
-
     @Override
-    public Rules rules() {
-        return Rules.empty()
-                .add(Calculate.value(localDate()).by(this::localDateValue))
+    public Rules rules(Rules source) {
+        return source
+                .add(Calculate.value(localDate()).by(this::localDateValue,"localDate"))
                 .add(Calculate.value(dayOfTheYear()).requiring(localDate())
                         .by(LocalDate::getDayOfYear,"dayOfTheYear"))
                 .add(Calculate.value(pvPerKWp()).requiring(dayOfTheYear())
@@ -40,5 +35,9 @@ public abstract class Location implements Part {
 
     public static Related<KWh, Class<Location>> pvPerKWp() {
         return Value.named("pvPerKWp", KWh.class).relatedTo(Location.class);
+    }
+
+    public static Related<Integer, Class<Location>> dayOfTheYear() {
+        return Value.named("dayOfTheYear", Integer.class).relatedTo(Location.class);
     }
 }
