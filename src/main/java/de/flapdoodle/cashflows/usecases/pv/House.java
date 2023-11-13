@@ -1,11 +1,9 @@
 package de.flapdoodle.cashflows.usecases.pv;
 
 import de.flapdoodle.cashflows.generators.Ease;
-import de.flapdoodle.cashflows.usecases.types.KW;
 import de.flapdoodle.cashflows.usecases.types.KWh;
 import de.flapdoodle.formula.Value;
 import de.flapdoodle.formula.calculate.Calculate;
-import de.flapdoodle.formula.rules.ImmutableRules;
 import de.flapdoodle.formula.rules.Rules;
 import de.flapdoodle.formula.values.Named;
 
@@ -45,24 +43,24 @@ public abstract class House implements Part {
     protected Rules localRules(Rules src) {
         Rules ret = src
                 .add(Calculate.value(consumption())
-                        .requiring(Location.dayOfTheYear()).by((dayOfYear) -> {
-                            double consumption = Ease.map(Ease.mirrorX(Ease::easeInOutCubic), dayOfYear / 365.0, summerConsumption().value(), winterConsumption().value());
-                            return KWh.of(consumption);
-                        }, "consumption(dayOfTheYear)"));
+                        .requiring(Location.dayOfTheYear()).by((dayOfYear) -> consumption(dayOfYear, summerConsumption(), winterConsumption()), "consumption(dayOfTheYear)"));
         if (pv().isPresent()) {
             PV pv = pv().get();
             ret= pv.rules(ret)
                     .add(Calculate.value(toGrid()).requiring(consumption(), pv.energy()).by((needed, fromPV) -> {
                         KWh toGrid = fromPV.minus(needed);
-                        if (toGrid.value()<0) {
-                            toGrid=KWh.of(0);
-                        }
-                        return toGrid;
+                        return toGrid.value() < 0
+                          ? KWh.of(0)
+                          : toGrid;
                     },"consumption-pv"));
         } else {
             ret = ret.add(Calculate.value(toGrid()).by(() -> KWh.of(0)));
         }
         return ret;
+    }
+
+    public static KWh consumption(int dayOfYear, KWh summerConsumption, KWh winterConsumption) {
+        return KWh.of(Ease.map(Ease.flipY(Ease.mirrorX(Ease::easeInOutCubic)), dayOfYear / 365.0, summerConsumption.value(), winterConsumption.value()));
     }
 
     public static ImmutableHouse.Builder builder() {

@@ -185,6 +185,31 @@ class EaseTest {
 				+ "-------------------------------------------------------------------");
 	}
 
+	@Test
+	public void map() {
+		assertThat(asAsciiArt(64, 16, x -> Ease.map(Ease.mirrorX(Ease::easeInOutCubic), x, 1, 0)))
+			.isEqualTo(""
+				+ "-------------------------------------------------------------------\n"
+				+ "|********                                                 ********|\n"
+				+ "|        ***                                           ***        |\n"
+				+ "|           *                                         *           |\n"
+				+ "|            *                                       *            |\n"
+				+ "|             *                                     *             |\n"
+				+ "|              *                                   *              |\n"
+				+ "|               *                                 *               |\n"
+				+ "|                                                                 |\n"
+				+ "|                *                               *                |\n"
+				+ "|                 *                             *                 |\n"
+				+ "|                  *                           *                  |\n"
+				+ "|                   *                         *                   |\n"
+				+ "|                    *                       *                    |\n"
+				+ "|                     *                     *                     |\n"
+				+ "|                      **                 **                      |\n"
+				+ "|                        ******** ********                        |\n"
+				+ "|                                *                                |\n"
+				+ "-------------------------------------------------------------------");
+	}
+
 	private static String asAsciiArt(int size, Ease easeFunction) {
 		return asAsciiArt(size, size, easeFunction);
 	}

@@ -53,12 +53,17 @@ class HouseTest {
 
 
         Result solved = Solver.solve(graph, StrictValueLookup.of(
-                MappedValue.of(Location.dayOfTheYear(), 300)
+//                MappedValue.of(Location.dayOfTheYear(), 180)
 //                MappedValue.of(testee.kwp(), KW.of(8.25))
         ));
 
-        KWh energy = solved.get(testee.consumption());
+        assertThat(solved.get(testee.consumption()).value())
+          .isCloseTo(7.43, Percentage.withPercentage(1));
 
-        assertThat(energy.value()).isCloseTo(4.568, Percentage.withPercentage(1));
+        assertThat(solved.get(testee.pv().get().energy()).value())
+          .isCloseTo(9.11, Percentage.withPercentage(1));
+
+        assertThat(solved.get(testee.toGrid()).value())
+          .isCloseTo(1.68, Percentage.withPercentage(1));
     }
 }
