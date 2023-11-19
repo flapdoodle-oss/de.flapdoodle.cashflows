@@ -12,6 +12,7 @@ public abstract class LocalDateTimeIterator implements LinearIterator<LocalDateT
 	protected abstract BiFunction<LocalDateTime, Integer, LocalDateTime> offset();
 
 	@Override
+	@Value.Auxiliary
 	public LocalDateTime next(LocalDateTime start, int offset) {
 		return offset().apply(start, offset);
 	}

@@ -1,11 +1,20 @@
 package de.flapdoodle.cashflows.iterator;
 
-import java.time.LocalDate;
+import org.immutables.value.Value;
 
-public class LocalDateIterator implements LinearIterator<LocalDate> {
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.function.BiFunction;
+
+@Value.Immutable
+public abstract class LocalDateIterator implements LinearIterator<LocalDate> {
+
+	@Value.Parameter
+	protected abstract BiFunction<LocalDate, Integer, LocalDate> offset();
 
 	@Override
+	@Value.Auxiliary
 	public LocalDate next(LocalDate start, int offset) {
-		return start.plusDays(offset);
+		return offset().apply(start, offset);
 	}
 }

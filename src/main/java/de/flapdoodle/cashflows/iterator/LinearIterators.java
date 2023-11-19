@@ -8,6 +8,11 @@ public abstract class LinearIterators {
 		// no instance
 	}
 
-	public static LinearIterator<LocalDate> EACH_DAY = new LocalDateIterator();
+	public static LinearIterator<LocalDate> EACH_DAY = ImmutableLocalDateIterator.of(LocalDate::plusDays);
+	public static LinearIterator<LocalDate> EACH_WEEK = ImmutableLocalDateIterator.of(LocalDate::plusWeeks);
 	public static LinearIterator<LocalDateTime> EACH_HOUR = ImmutableLocalDateTimeIterator.of(LocalDateTime::plusHours);
+
+	public static LinearIterator<LocalDate> eachNDay(int day) {
+		return ImmutableLocalDateIterator.of((localDate, offset) -> localDate.plusDays(offset*day));
+	}
 }
