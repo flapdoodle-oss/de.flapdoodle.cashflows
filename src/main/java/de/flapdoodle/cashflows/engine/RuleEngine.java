@@ -2,7 +2,7 @@ package de.flapdoodle.cashflows.engine;
 
 import com.google.common.collect.Streams;
 import de.flapdoodle.cashflows.iterator.LinearIterator;
-import de.flapdoodle.checks.Preconditions;
+import de.flapdoodle.cashflows.records.History;
 import de.flapdoodle.formula.calculate.MappedValue;
 import de.flapdoodle.formula.calculate.StrictValueLookup;
 import de.flapdoodle.formula.rules.Rules;
@@ -13,9 +13,7 @@ import de.flapdoodle.formula.solver.ValueGraph;
 import org.immutables.builder.Builder;
 import org.immutables.value.Value;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

@@ -1,12 +1,11 @@
 package de.flapdoodle.cashflows.engine;
 
 import de.flapdoodle.cashflows.generators.Ease;
-import de.flapdoodle.cashflows.iterator.ForwardIterators;
 import de.flapdoodle.cashflows.iterator.LinearIterators;
+import de.flapdoodle.cashflows.records.History;
+import de.flapdoodle.cashflows.report.History2Csv;
 import de.flapdoodle.cashflows.tests.Area;
 import de.flapdoodle.cashflows.tests.AsciiGraph;
-import de.flapdoodle.cashflows.types.FlowState;
-import de.flapdoodle.cashflows.types.Range;
 import de.flapdoodle.cashflows.usecases.pv.SolarCalculations;
 import de.flapdoodle.cashflows.usecases.types.KWh;
 import de.flapdoodle.formula.Value;
@@ -16,12 +15,13 @@ import de.flapdoodle.formula.rules.Rules;
 import de.flapdoodle.formula.values.Named;
 import org.junit.jupiter.api.Test;
 
-import java.time.DayOfWeek;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.TimeZone;
+import java.util.Locale;
 
 class RuleEngineTest {
 	@Test
@@ -113,6 +113,12 @@ class RuleEngineTest {
 //				renderContext.point('#', i, cloudy.after()-cloudy.before());
 			}
 		}));
+
+		String csv = new History2Csv<LocalDateTime>(RuleEngineTest::toCSV)
+			.render(history, Arrays.asList(batteryStoredEnergy, grid));
+		System.out.println("-------------------");
+		System.out.println(csv);
+		System.out.println("-------------------");
 	}
 
 	@Test
@@ -132,4 +138,28 @@ class RuleEngineTest {
 //			.add(Calculate.value())
 		;
 	}
+
+	private static DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+	private static DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+	private static NumberFormat NUMBER_FORMAT = NumberFormat.getInstance(Locale.GERMAN);
+
+	private static String toCSV(Object o) {
+		if (o instanceof KWh) {
+			return asString(NUMBER_FORMAT.format(((KWh) o).value()));
+		}
+		if (o instanceof LocalDate) {
+			LocalDate d = (LocalDate) o;
+			return asString(DATE_FORMAT.format(d));
+		}
+		if (o instanceof LocalDateTime) {
+			LocalDateTime d = (LocalDateTime) o;
+			return asString(DATE_TIME_FORMAT.format(d));
+		}
+		return o.toString();
+	}
+
+	private static String asString(String csvValue) {
+		return "\""+csvValue+"\"";
+	}
+
 }

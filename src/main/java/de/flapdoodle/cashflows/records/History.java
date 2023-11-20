@@ -1,12 +1,13 @@
-package de.flapdoodle.cashflows.engine;
+package de.flapdoodle.cashflows.records;
 
 import de.flapdoodle.cashflows.iterator.LinearIterator;
 import de.flapdoodle.checks.Preconditions;
 import org.immutables.value.Value;
 
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Value.Immutable
 public abstract class History<I> {
@@ -18,6 +19,18 @@ public abstract class History<I> {
 	public <T> T get(int offset, de.flapdoodle.formula.Value<T> id) {
 		Entry entry = Preconditions.checkNotNull(entries().get(offset), "no entry for %s", offset);
 		return entry.get(id);
+	}
+
+	@Value.Lazy
+	public List<Integer> offsets() {
+		return entries().keySet().stream()
+			.sorted()
+			.collect(Collectors.toList());
+	}
+
+	@Value.Auxiliary
+	public I indexOf(Integer offset) {
+		return iterator().next(start(), offset);
 	}
 
 	@Value.Auxiliary
