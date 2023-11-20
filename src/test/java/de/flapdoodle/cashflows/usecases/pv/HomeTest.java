@@ -6,17 +6,16 @@ import de.flapdoodle.formula.Value;
 import de.flapdoodle.formula.calculate.Calculation;
 import de.flapdoodle.formula.calculate.MappedValue;
 import de.flapdoodle.formula.calculate.StrictValueLookup;
-import de.flapdoodle.formula.calculate.ValueLookup;
 import de.flapdoodle.formula.explain.RuleDependencyGraph;
 import de.flapdoodle.formula.rules.Rules;
-import de.flapdoodle.formula.solver.*;
+import de.flapdoodle.formula.solver.Result;
+import de.flapdoodle.formula.solver.Solver;
+import de.flapdoodle.formula.solver.ValueDependencyGraphBuilder;
+import de.flapdoodle.formula.solver.ValueGraph;
 import de.flapdoodle.formula.values.Named;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-import java.time.Month;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

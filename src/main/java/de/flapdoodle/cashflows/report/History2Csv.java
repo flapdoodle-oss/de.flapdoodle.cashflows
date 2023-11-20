@@ -1,17 +1,10 @@
 package de.flapdoodle.cashflows.report;
 
-import de.flapdoodle.cashflows.records.ByFlowId;
-import de.flapdoodle.cashflows.records.ByIndex;
 import de.flapdoodle.cashflows.records.History;
-import de.flapdoodle.cashflows.records.Records;
-import de.flapdoodle.cashflows.types.FlowId;
-import de.flapdoodle.cashflows.types.FlowState;
 import de.flapdoodle.formula.Value;
 import de.flapdoodle.formula.types.HasHumanReadableLabel;
 
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class History2Csv<I> implements HistoryRenderer<I, String> {

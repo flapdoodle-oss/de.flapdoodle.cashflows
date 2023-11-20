@@ -3,7 +3,6 @@ package de.flapdoodle.cashflows.usecases.pv;
 import de.flapdoodle.cashflows.types.Id;
 import de.flapdoodle.cashflows.usecases.types.KW;
 import de.flapdoodle.cashflows.usecases.types.KWh;
-import de.flapdoodle.formula.calculate.MappedValue;
 import de.flapdoodle.formula.calculate.StrictValueLookup;
 import de.flapdoodle.formula.explain.RuleDependencyGraph;
 import de.flapdoodle.formula.rules.Rules;

@@ -4,13 +4,10 @@ import de.flapdoodle.cashflows.types.Id;
 import de.flapdoodle.cashflows.usecases.types.KW;
 import de.flapdoodle.cashflows.usecases.types.KWh;
 import de.flapdoodle.formula.Value;
-import de.flapdoodle.formula.ValueSink;
 import de.flapdoodle.formula.calculate.Calculate;
 import de.flapdoodle.formula.rules.Rules;
 import de.flapdoodle.formula.values.Related;
 import de.flapdoodle.reflection.TypeInfo;
-
-import java.time.LocalDate;
 
 @org.immutables.value.Value.Immutable
 public abstract class PV implements Part {

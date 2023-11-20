@@ -1,6 +1,5 @@
 package de.flapdoodle.cashflows.usecases.playground;
 
-import de.flapdoodle.cashflows.usecases.types.KW;
 import de.flapdoodle.cashflows.usecases.types.KWh;
 import de.flapdoodle.formula.Value;
 import de.flapdoodle.formula.calculate.Calculate;
@@ -14,8 +13,6 @@ import de.flapdoodle.formula.solver.Solver;
 import de.flapdoodle.formula.solver.ValueDependencyGraphBuilder;
 import de.flapdoodle.formula.solver.ValueGraph;
 import de.flapdoodle.formula.values.Named;
-import org.assertj.core.api.Assertions;
-import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

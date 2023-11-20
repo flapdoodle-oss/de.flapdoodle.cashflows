@@ -3,7 +3,6 @@ package de.flapdoodle.cashflows.iterator;
 import org.immutables.value.Value;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.function.BiFunction;
 
 @Value.Immutable
