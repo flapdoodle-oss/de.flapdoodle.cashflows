@@ -13,6 +13,7 @@ import de.flapdoodle.formula.calculate.Calculate;
 import de.flapdoodle.formula.rules.ImmutableRules;
 import de.flapdoodle.formula.rules.Rules;
 import de.flapdoodle.formula.values.Named;
+import de.flapdoodle.reflection.TypeInfo;
 import org.junit.jupiter.api.Test;
 
 import java.text.NumberFormat;
@@ -29,7 +30,7 @@ class RuleEngineTest {
 		LocalDateTime now = LocalDateTime.of(2012, 3, 24, 0, 0, 0, 0);
 
 		Named<Integer> dayOfYearValue = Value.named("dayOfYear", Integer.class);
-		Named<LocalDateTime> nowValue = Value.named("now", LocalDateTime.class);
+		Named<Iteration<LocalDateTime>> nowValue = Value.named("now", Iteration.typeInfo(TypeInfo.of(LocalDateTime.class)));
 		Named<String> dayOfYearAsStringValue = Value.named("dayOfYearAsString", String.class);
 
 //		FlowId<Double> dummy = FlowId.of("dummy", FlowType.DOUBLE);
@@ -50,7 +51,7 @@ class RuleEngineTest {
 		ImmutableRules rules = Rules.empty()
 			.add(Calculate.value(pvEnergy)
 				.requiring(nowValue)
-				.by(n -> KWh.of(Ease.map(Ease.mirrorX(Ease::easeInOutQuad), n.getHour()/24.0, 0, 5.0))))
+				.by(n -> KWh.of(Ease.map(Ease.mirrorX(Ease::easeInOutQuad), n.current().getHour()/24.0, 0, 5.0))))
 			.add(Calculate.value(houseConsumption)
 				.by(() -> KWh.of(2)))
 			.add(Calculate.value(batteryMax)

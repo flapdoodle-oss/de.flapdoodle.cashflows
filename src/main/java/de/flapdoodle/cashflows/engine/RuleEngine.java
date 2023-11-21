@@ -21,11 +21,10 @@ import java.util.stream.Stream;
 public abstract class RuleEngine<T extends Comparable<? super T>> {
 	@Builder.Parameter
 	protected abstract LinearIterator<T> iterator();
-	protected abstract de.flapdoodle.formula.Value<T> iteratorValue();  // last, now, delta?
+	protected abstract de.flapdoodle.formula.Value<Iteration<T>> iteratorValue();  // last, now, delta?
 
 	protected abstract Rules iterationRules();
 	protected abstract List<Aggregation<?>> aggregations();
-//	protected abstract List<RuleSet<T>> ruleSets();
 
 	public static <T extends Comparable<? super T>> ImmutableRuleEngine.Builder<T> builder(LinearIterator<T> iterator) {
 		return ImmutableRuleEngine.builder(iterator);
@@ -36,10 +35,8 @@ public abstract class RuleEngine<T extends Comparable<? super T>> {
 		ValueGraph graph = ValueDependencyGraphBuilder.build(iterationRules());
 		History<T> history = History.with(iterator(), start);
 
-//		AggregationMap aggregationMap=new AggregationMap();
-//		aggregations().forEach(it -> setStartValue(aggregationMap, it));
-
 		int loop=0;
+		T last=iterator().next(start, loop);
 		T current=iterator().next(start, loop);
 
 		history=history.change(loop, changeListener -> {
@@ -52,15 +49,9 @@ public abstract class RuleEngine<T extends Comparable<? super T>> {
 			StrictValueLookup valueLookup = StrictValueLookup.of(
 				Streams.concat(
 					mappedValues(history, loop, aggregations()).stream(),
-					Stream.of(MappedValue.of(iteratorValue(), current))
+					Stream.of(MappedValue.of(iteratorValue(), Iteration.of(last, current)))
 				).collect(Collectors.toList())
 			);
-
-//			String explained = RuleDependencyGraph.explain(iterationRules());
-//			System.out.println("---------------------");
-//			System.out.println(explained);
-//			System.out.println("---------------------");
-
 
 			Result solved = Solver.solve(graph, valueLookup);
 
@@ -68,9 +59,8 @@ public abstract class RuleEngine<T extends Comparable<? super T>> {
 				aggregations().forEach(it -> aggregate(changeListener, solved, it));
 			});
 
-//			System.out.println(aggregationMap);
-
 			loop++;
+			last=current;
 			current=iterator().next(start, loop);
 		} while (current.compareTo(end) < 0);
 
