@@ -1,4 +1,4 @@
-package de.flapdoodle.cashflows.generators;
+package de.flapdoodle.cashflows.tests;
 
 public class AsciiArt {
 	private final double minX;

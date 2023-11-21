@@ -1,6 +1,6 @@
 package de.flapdoodle.cashflows.usecases.pv;
 
-import de.flapdoodle.cashflows.generators.AsciiArt;
+import de.flapdoodle.cashflows.tests.AsciiArt;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

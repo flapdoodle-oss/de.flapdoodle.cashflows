@@ -12,7 +12,6 @@ public abstract class Sun {
 	public static double sunIntensity(int dayOfTheYear, int minuteOfDay) {
 		double dayLength = dayLength(dayOfTheYear);
 		double dayStart = (24.0 - dayLength) / 2.0;
-		double dayEnd = dayStart + dayLength;
 		double now=minuteOfDay / 60.0;
 		double nowAsRelativePositionOfTheDay = (now - dayStart) / dayLength;
 

@@ -1,5 +1,6 @@
 package de.flapdoodle.cashflows.generators;
 
+import de.flapdoodle.cashflows.tests.AsciiArt;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;

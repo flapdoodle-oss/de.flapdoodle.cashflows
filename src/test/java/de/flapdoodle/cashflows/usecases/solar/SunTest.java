@@ -1,10 +1,11 @@
 package de.flapdoodle.cashflows.usecases.solar;
 
-import de.flapdoodle.cashflows.generators.AsciiArt;
+import de.flapdoodle.cashflows.tests.Area;
+import de.flapdoodle.cashflows.tests.AsciiArt;
+import de.flapdoodle.cashflows.tests.AsciiGraph;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class SunTest {
 
@@ -28,35 +29,28 @@ class SunTest {
 
 	@Test
 	void sunIntensity() {
-		assertThat(AsciiArt.with(0, 24*60, -0.1, 1.1)
-			.asAsciiArt(32, 8, x -> Sun.sunIntensity(300, (int) x)))
+		assertThat(AsciiGraph.of(Area.of(0, 24*60, -0.1, 1.1))
+				.render(48, 12, renderContext -> {
+					for (int minuteOfDay = 0; minuteOfDay < 24*60; minuteOfDay=minuteOfDay+10) {
+						renderContext.point('-', minuteOfDay, Sun.sunIntensity(300, minuteOfDay));
+						renderContext.point('*', minuteOfDay, Sun.sunIntensity(180, minuteOfDay));
+					}
+				}))
 			.isEqualTo(""
-				+ "-----------------------------------\n"
-				+ "|               ***               |\n"
-				+ "|              *   *              |\n"
-				+ "|             *     *             |\n"
-				+ "|            *       *            |\n"
-				+ "|           *         *           |\n"
-				+ "|                                 |\n"
-				+ "|          *           *          |\n"
-				+ "|**********             **********|\n"
-				+ "|                                 |\n"
-				+ "-----------------------------------");
-
-		assertThat(AsciiArt.with(0, 24*60, -0.1, 1.1)
-			.asAsciiArt(32, 8, x -> Sun.sunIntensity(180, (int) x)))
-			.isEqualTo(""
-				+ "-----------------------------------\n"
-				+ "|              *****              |\n"
-				+ "|            **     **            |\n"
-				+ "|          **         **          |\n"
-				+ "|         *             *         |\n"
-				+ "|        *               *        |\n"
-				+ "|       *                 *       |\n"
-				+ "|      *                   *      |\n"
-				+ "|******                     ******|\n"
-				+ "|                                 |\n"
-				+ "-----------------------------------");
+				+ "+------------------------------------------------+\n"
+				+ "|                                                |\n"
+				+ "|                      ***                       |\n"
+				+ "|                  ****- -****                   |\n"
+				+ "|                ***--     --***                 |\n"
+				+ "|              **  -         -  **               |\n"
+				+ "|             **  -           -  **              |\n"
+				+ "|           ***  -             -  ***            |\n"
+				+ "|          **   --             --   **           |\n"
+				+ "|         **    -               -    **          |\n"
+				+ "|        **    -                 -    **         |\n"
+				+ "|       *     --                 --     *        |\n"
+				+ "|*******-------                   -------******* |\n"
+				+ "+------------------------------------------------+");
 	}
 
 	@Test
