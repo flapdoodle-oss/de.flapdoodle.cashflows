@@ -71,4 +71,45 @@ class SunTest {
 				+ "-----------------------------------");
 	}
 
+	@Test
+	void zenith() {
+		assertThat(AsciiArt.with(0, 365, 10, 70)
+			.asAsciiArt(32, 8, x -> Sun.zenith((int)(x))))
+			.isEqualTo(""
+				+ "-----------------------------------\n"
+				+ "|                                 |\n"
+				+ "|             *******             |\n"
+				+ "|           **       **           |\n"
+				+ "|         **           **         |\n"
+				+ "|        *               *        |\n"
+				+ "|      **                 **      |\n"
+				+ "|    **                     **    |\n"
+				+ "|****                         ****|\n"
+				+ "|                                 |\n"
+				+ "-----------------------------------");
+	}
+
+	@Test
+	void zenithOfDay() {
+		assertThat(AsciiArt.with(300*24, 303*24, 0, 50)
+			.asAsciiArt(64, 10, hourOfYear -> {
+				int dayOfYear = (int) hourOfYear / 24;
+				int minuteOfDay = (((int) hourOfYear) % 24)*60;
+				return Sun.zenith(dayOfYear) * Sun.sunIntensity(dayOfYear, minuteOfDay);
+			}))
+			.isEqualTo(""
+				+ "-------------------------------------------------------------------\n"
+				+ "|                                                                 |\n"
+				+ "|                                                                 |\n"
+				+ "|                                                                 |\n"
+				+ "|                                                                 |\n"
+				+ "|           *                    *                     *          |\n"
+				+ "|         ** **                 * **                 ** *         |\n"
+				+ "|        *     *               *    *                             |\n"
+				+ "|                                                   *    *        |\n"
+				+ "|               *             *      *             *      *       |\n"
+				+ "|       *                    *        *           *        *      |\n"
+				+ "|*******         ************          ***********          ******|\n"
+				+ "-------------------------------------------------------------------");
+	}
 }

@@ -211,6 +211,33 @@ class EaseTest {
 				+ "-------------------------------------------------------------------");
 	}
 
+	@Test
+	public void linearInterpolated() {
+		Ease testee = Ease.interpolated(Ease.Interpolation.Linear, true, 0.0, 1.0, 0.5);
+
+		assertThat(asAsciiArt(64, 16, testee::map))
+			.isEqualTo(""
+				+ "-------------------------------------------------------------------\n"
+				+ "|                     ***                                         |\n"
+				+ "|                   **   ***                                      |\n"
+				+ "|                  *        ***                                   |\n"
+				+ "|                 *            **                                 |\n"
+				+ "|               **               ***                              |\n"
+				+ "|              *                    ***                           |\n"
+				+ "|             *                        **                         |\n"
+				+ "|           **                           ***                      |\n"
+				+ "|          *                                ***                   |\n"
+				+ "|         *                                    **                 |\n"
+				+ "|       **                                       ***              |\n"
+				+ "|      *                                            ***           |\n"
+				+ "|     *                                                **         |\n"
+				+ "|   **                                                   ***      |\n"
+				+ "|  *                                                        ***   |\n"
+				+ "| *                                                            ** |\n"
+				+ "|*                                                               *|\n"
+				+ "-------------------------------------------------------------------");
+	}
+
 	private static String asAsciiArt(int size, Ease easeFunction) {
 		return asAsciiArt(size, size, easeFunction);
 	}

@@ -58,4 +58,20 @@ public interface Ease {
 		Preconditions.checkArgument(x <= 1.0, "%s >= 1.0", x);
 		return x;
 	}
+
+	static double[] assertRange(double [] array) {
+		for (int i=0;i<array.length;i++) {
+			Preconditions.checkArgument(array[i] >= 0.0, "array[%s]: %s <= 0", i, array[i]);
+			Preconditions.checkArgument(array[i] <= 1.0, "array[%s]: %s >= 1.0", i, array[i]);
+		}
+		return array;
+	}
+
+	enum Interpolation {
+		Linear
+	}
+
+	static Ease interpolated(Interpolation interpolation, boolean repeatable, double ... points) {
+		return InterpolatedEase.interpolated(interpolation,repeatable,points);
+	}
 }

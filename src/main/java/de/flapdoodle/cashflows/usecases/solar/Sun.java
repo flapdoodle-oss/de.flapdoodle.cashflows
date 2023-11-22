@@ -33,4 +33,8 @@ public abstract class Sun {
 		return KWh.of(Ease.map(Ease::sinusUpDown, dayOfYear / 365.0, minkWhproKW, maxkWhproKW));
 	}
 
+	// http://www.solartopo.com/sonnenumlaufbahn.htm
+	public static double zenith(int dayOfYear) {
+		return normal(dayOfYear, 12.77, 59.58);
+	}
 }
