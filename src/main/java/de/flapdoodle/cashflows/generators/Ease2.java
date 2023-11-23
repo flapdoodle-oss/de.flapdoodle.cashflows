@@ -16,24 +16,15 @@
  */
 package de.flapdoodle.cashflows.generators;
 
-import de.flapdoodle.checks.Preconditions;
-
 @FunctionalInterface
-public interface Generator {
-	double map(double x);
+public interface Ease2 {
+	double map(double x, double y);
 
-	static Generator noise(long seed, double freq) {
-		return x -> assertRange((OpenSimplex2.noise2(seed, x*freq, 0.0) + 1.0) / 2.0);
+	static Ease2 blend(Ease left, Ease right, Ease blend) {
+		return (x, y) -> {
+			double balance = blend.map(y);
+			return left.map(x) * (1-balance) + right.map(x) * balance;
+		};
 	}
 
-	static double map(Generator generator, double x, double min, double max) {
-		double factor = generator.map(x);
-		return factor * (max - min) + min;
-	}
-
-	static double assertRange(double x) {
-		Preconditions.checkArgument(x >= 0.0, "%s <= 0", x);
-		Preconditions.checkArgument(x <= 1.0, "%s >= 1.0", x);
-		return x;
-	}
 }
